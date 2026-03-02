@@ -1,6 +1,8 @@
 import random
 import streamlit as st
 
+from logic_utils import check_guess, parse_guess
+
 def get_range_for_difficulty(difficulty: str):
     if difficulty == "Easy":
         return 1, 20
@@ -9,43 +11,6 @@ def get_range_for_difficulty(difficulty: str):
     if difficulty == "Hard":
         return 1, 50
     return 1, 100
-
-
-def parse_guess(raw: str):
-    if raw is None:
-        return False, None, "Enter a guess."
-
-    if raw == "":
-        return False, None, "Enter a guess."
-
-    try:
-        if "." in raw:
-            value = int(float(raw))
-        else:
-            value = int(raw)
-    except Exception:
-        return False, None, "That is not a number."
-
-    return True, value, None
-
-
-def check_guess(guess, secret):
-    if guess == secret:
-        return "Win", "🎉 Correct!"
-
-    try:
-        if guess < secret: # FIXME: hint logic is incorrect
-            return "Too High", "📈 Go HIGHER!" 
-        else:
-            return "Too Low", "📉 Go LOWER!"
-    except TypeError:
-        g = str(guess)
-        if g == secret:
-            return "Win", "🎉 Correct!"
-        if g < secret:
-            return "Too High", "📈 Go HIGHER!"
-        return "Too Low", "📉 Go LOWER!"
-
 
 def update_score(current_score: int, outcome: str, attempt_number: int):
     if outcome == "Win":
@@ -118,11 +83,6 @@ with st.expander("Developer Debug Info"):
     st.write("Difficulty:", difficulty)
     st.write("History:", st.session_state.history)
 
-raw_guess = st.text_input(
-    "Enter your guess:",
-    key=f"guess_input_{difficulty}"
-)
-
 col1, col2, col3 = st.columns(3)
 with col1:
     submit = st.button("Submit Guess 🚀")
@@ -132,10 +92,25 @@ with col3:
     show_hint = st.checkbox("Show hint", value=True)
 
 if new_game:
-    st.session_state.attempts = 0
-    st.session_state.secret = random.randint(1, 100)
+    # Reset all relevant game state so a fresh game really begins
+    st.session_state.attempts = 1
+    st.session_state.secret = random.randint(low, high)
+    st.session_state.status = "playing"            # clear win/loss flag
+    st.session_state.history = []                  # optional: wipe past guesses
+    st.session_state.score = 0                      # reset score if desired
+
+    # clear the text input widget stored under its key
+    key = f"guess_input_{difficulty}"
+    if key in st.session_state:
+        st.session_state[key] = ""
+
     st.success("New game started.")
     st.rerun()
+
+raw_guess = st.text_input(
+    "Enter your guess:",
+    key=f"guess_input_{difficulty}"
+)
 
 if st.session_state.status != "playing":
     if st.session_state.status == "won":
