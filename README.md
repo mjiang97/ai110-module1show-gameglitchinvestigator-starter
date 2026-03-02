@@ -36,3 +36,6 @@ It wrote the code, ran away, and now the game is unplayable.
 ## 🚀 Stretch Features
 
 - [ ] [If you choose to complete Challenge 4, insert a screenshot of your Enhanced Game UI here]
+
+## Summary
+Through this Week 1 Tinker activity, the core concept students needed to understand was how to carefully explore and debug AI-generated code rather than assuming it was correct. The exercise emphasized identifying what needs to be fixed, organizing those issues clearly in the code using # FIX ME comments, and tracking changes thoughtfully in the reflection.md file. I think students are most likely to struggle with feeling overwhelmed by multiple files and figuring out how to debug in a structured, step-by-step way. AI was helpful for explaining confusing logic and suggesting possible fixes, but it could be misleading when it confidently proposed solutions before the root cause was fully understood. One important lesson is that students should first reason through what they expect the program to do before relying on AI for a fix. As a TF, I would guide students by asking them to describe the expected versus actual behavior and walk through the code logically to narrow down the issue without giving away the answer.
