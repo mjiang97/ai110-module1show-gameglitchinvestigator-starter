@@ -19,12 +19,17 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
 - Which AI tools did you use on this project (for example: ChatGPT, Gemini, Copilot)?
   I used Claude Chat and Claude Code throughout this project — Claude Chat for explaining concepts and talking through bugs, and Claude Code directly in the editor for reading and editing the source files.
 
+
+  I used GitHub Copilot inside VS Code to analyze the existing codebase and explain parts of the logic I didn’t immediately understand. I mainly used it     through inline chat and by referencing specific files to get context-aware explanations. I also used it to refactor my code and update the code.
 - Give one example of an AI suggestion that was correct (including what the AI suggested and how you verified the result).
   When I described the hint bug, Claude immediately identified that the comparison operators in the hint logic were flipped — the code was using `>` where it should have used `<` and vice versa. I verified the fix by running the game and deliberately guessing numbers I knew were too low or too high, confirming that the hints now correctly said "Go higher" and "Go lower" in the right situations.
 
 - Give one example of an AI suggestion that was incorrect or misleading (including what the AI suggested and how you verified the result).
   Claude was generally helpful, but at one point when I described the new-game reset issue, it initially gave a partial fix that cleared the text box but did not reset the session state variables tracking game progress. I verified it was incomplete by clicking "New Game" after a win and finding the game still refused to accept guesses. I had to give Claude more specific context about which state variables existed before it produced a complete fix.
 
+  At one point, Copilot suggested restructuring a larger portion of the game logic to fix the incorrect hint messages. However, after reviewing the code
+  more carefully, I realized the real issue was just a reversed conditional statement. I verified this by simply swapping the comparison logic, which
+  immediately fixed the hints without needing a major refactor.
 ---
 
 ## 3. Debugging and testing your fixes
@@ -38,6 +43,8 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
 - Did AI help you design or understand any tests? How?
   Yes — Claude helped me think through edge cases for the hint logic by asking me to consider what should happen when the guess equals the secret number, when it is too low, and when it is too high. That framing helped me structure my manual tests around those three cases rather than just clicking around randomly.
 
+  AI helped by suggesting edge cases to think about, such as what happens after winning and immediately clicking “New Game.” It encouraged me to test
+  repeated interactions instead of just a single playthrough. That made my testing more thorough and intentional.
 ---
 
 ## 4. What did you learn about Streamlit and state?
@@ -46,6 +53,9 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
   In the original code, the secret number was generated with `random.randint()` at the top level of the script, outside of any state management. Every time the player made a guess, Streamlit reran the entire script from top to bottom, which called `random.randint()` again and picked a brand new number. So you were never actually guessing the same target twice.
 
 - How would you explain Streamlit "reruns" and session state to a friend who has never used Streamlit?
+
+  I would explain that Streamlit reruns the whole program whenever you click a button or change input. If you don’t store important variables in
+  st.session_state, they reset each time. Session state acts like memory that survives those reruns.
   Imagine every time you click a button in the app, Python reruns your entire script from scratch — like refreshing a page that forgets everything. Session state is like a sticky notepad that survives those reruns. Anything you store in `st.session_state` stays put between reruns, so the secret number only gets generated once and sticks around for the whole game.
 
 - What change did you make that finally gave the game a stable secret number?
@@ -56,10 +66,15 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
 ## 5. Looking ahead: your developer habits
 
 - What is one habit or strategy from this project that you want to reuse in future labs or projects?
+  - This could be a testing habit, a prompting strategy, or a way you used Git.
+  
+    I want to continue using clear `# FIX ME` comments to organize what needs to be addressed. Writing reflections alongside fixes also helped me think
+    more intentionally about my debugging process.
   Giving AI specific context — the actual code snippet, the exact error or wrong behavior, and what I expected instead — got me far better answers than vague descriptions. I want to keep that habit of being precise with my prompts rather than just saying "this is broken, fix it."
 
 - What is one thing you would do differently next time you work with AI on a coding task?
-  I would verify each AI suggestion more carefully before moving on, especially for multi-step fixes. A few times I accepted what looked like a complete answer, only to find it was partial — checking the actual behavior right after applying a fix would have saved time.
 
+  Next time, I would spend more time reasoning through the bug myself before asking AI for a solution. I realized that understanding the problem first
+  makes AI suggestions more useful and easier to evaluate.
 - In one or two sentences, describe how this project changed the way you think about AI generated code.
   AI-generated code is a strong first draft, not a finished answer — it can get the logic directionally right but still miss edge cases or leave state variables in an inconsistent state. I now treat AI suggestions as something to test and read critically rather than something to paste in and trust.
