@@ -25,9 +25,21 @@ It wrote the code, ran away, and now the game is unplayable.
 
 ## 📝 Document Your Experience
 
-- [ ] Describe the game's purpose.
-- [ ] Detail which bugs you found.
-- [ ] Explain what fixes you applied.
+- [x] **Game purpose:** A number-guessing game where the player picks a difficulty, then tries to guess a randomly chosen secret number within a limited number of attempts. Hints tell you whether to guess higher or lower after each wrong guess.
+
+- [x] **Bugs found:**
+  1. The hint logic was backwards — guessing too low produced "Go lower" and guessing too high produced "Go higher."
+  2. The secret number was re-generated on every Streamlit rerun (every button click), so you were never guessing the same target twice.
+  3. Clicking "New Game" did not clear state properly — the old guess, win message, and game status all persisted, breaking the new round.
+  4. Easy mode displayed a 1–20 range but the secret number was still drawn from 1–100.
+  5. The `get_range_for_difficulty` and `update_score` functions existed as stubs in `logic_utils.py` with `NotImplementedError`, while the real implementations sat only in `app.py`.
+
+- [x] **Fixes applied:**
+  1. Swapped the comparison operators in `check_guess` so "Too Low" maps to "Go HIGHER" and "Too High" maps to "Go LOWER."
+  2. Wrapped secret number generation in `if "secret" not in st.session_state` so it is only created once per game.
+  3. Updated the "New Game" handler to reset all relevant session state keys and call `st.rerun()`.
+  4. Fixed `get_range_for_difficulty` to actually control the `random.randint` call used when generating the secret.
+  5. Moved `get_range_for_difficulty` and `update_score` into `logic_utils.py` and updated `app.py` to import them from there.
 
 ## 📸 Demo
 
